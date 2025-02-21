@@ -17,6 +17,6 @@ class UserModel
     }
 
     private function SelectUser() {
-        return "SELECT * FROM users WHERE email = ? AND password = ?";
+        return "SELECT * FROM users WHERE email = ?";
     }
 }

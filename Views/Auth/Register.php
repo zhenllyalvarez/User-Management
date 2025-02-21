@@ -14,7 +14,7 @@
         <div class="bg-white shadow-md w-sm rounded px-8 py-4">
             <h1 class="flex justify-center font-bold text-2xl mb-4">Register</h1>
             <div class="border border-gray-200 mx-4 mt-6 mb-6"></div>
-            <form class="flex flex-col mb-2" action="/user_management/Router/UserRoute/UserRoute.php" method="post">
+            <form class="flex flex-col mb-2" action="/user_management/Router/UserRoute/UserRegister.php" method="post">
                 <div class="flex flex-col">
                     <label class="" for="">Fullname</label>
                     <input class="border border-gray-400 bg-white p-2 mb-2 rounded" name="Fullname" type="text" placeholder="John Doe">

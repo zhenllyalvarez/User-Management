@@ -1,3 +1,11 @@
+<?php
+    session_start();
+
+    if(isset($_COOKIE['isLoggedIn'])) {
+        header("Location: /user_management/Views/User/Dashboard.php");
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,21 +22,17 @@
         <div class="bg-white shadow-md w-sm rounded px-8 py-4">
             <h1 class="flex justify-center font-bold text-2xl mb-4">Login</h1>
             <div class="border border-gray-200 mx-4 mt-6 mb-6"></div>
-            <form class="flex flex-col gap-4 mb-2" action="">
-                <!-- <div class="flex flex-col gap-2">
-                    <label class="" for="">Fullname</label>
-                    <input class="border border-gray-400 bg-white p-2 rounded" type="text" placeholder="John Doe">
-                </div> -->
+            <form class="flex flex-col gap-4 mb-2" action="/user_management/Router/UserRoute/UserLogin.php" method="post">
                 <div class="flex flex-col gap-2">
                     <label class="font-normal text-sm" for="">Email</label>
-                    <input class=" border border-gray-400 bg-white p-2 rounded focus:outline-none" type=" email" placeholder="example@gmail.com">
+                    <input class=" border border-gray-400 bg-white p-2 rounded focus:outline-none" name="Email" type="email" placeholder="example@gmail.com">
                 </div>
                 <div class="flex flex-col gap-2">
                     <label class="font-normal text-sm" for="">Password</label>
-                    <input class=" border border-gray-400 bg-white p-2 focus:outline-none rounded" type=" email" placeholder="********">
+                    <input class=" border border-gray-400 bg-white p-2 focus:outline-none rounded" name="Password" type="password" placeholder="********">
                 </div>
                 <div class="">
-                    <button class="bg-blue-500 w-full text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Login</button>
+                    <button type="submit" class="bg-blue-500 w-full text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Login</button>
                 </div>
             </form>
             <div class="flex flex-col gap-2 mt-4">

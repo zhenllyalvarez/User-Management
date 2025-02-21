@@ -1,5 +1,5 @@
 <?php
-namespace Router\UserRoute;
+namespace Router\UserRegister;
 
 include ($_SERVER["DOCUMENT_ROOT"] . "/user_management/App/Controller/UserController.php");
 
