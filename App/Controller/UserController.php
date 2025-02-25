@@ -2,9 +2,9 @@
 
 namespace App\Controller;
 include ($_SERVER["DOCUMENT_ROOT"] . "/user_management/App/Database/Database.php");
-include ($_SERVER["DOCUMENT_ROOT"] . "/user_management/App/Model/UserModel.php");
+include ($_SERVER["DOCUMENT_ROOT"] . "/user_management/App/Model/AuthModel.php");
 
-use user_management\App\Model\UserModel;
+use user_management\App\Model\AuthModel;
 use user_management\App\Database\Database;
 use PDOException;
 use PDO;
@@ -17,37 +17,19 @@ class UserController
         try {
             $db = new Database();
             if($db->getStatus()) {
-                $um = new UserModel();
+                $um = new AuthModel();
                 $stmt = $db->getConnection()->prepare($um->CreateUser());
                 $hashPasword = password_hash($password, PASSWORD_DEFAULT);
                 $created_at = date('Y-m-d H:i:s');
                 $stmt->execute([$fullname, $email, $hashPasword, $created_at]);
                 if($stmt->rowCount() > 0) {
-                    return ["Status" => "Success", "Code" => 201, "Message" => "Successful registration."];
+                    return json_encode([
+                        "Status" => "Success",
+                        "Code" => 201,
+                        "Message" => "Successfully created."
+                    ]);
                 } else {
-                    return ["Status" => "fail", "Code" => 400, "Message" => "Failed to register"];
-                }
-            } else {
-                return ["Status" => "Error", "Code" => 406, "Message" => "There is an error for register."];
-            }
-        } catch (PDOException $e) {
-            return ["Status" => "Error", "Code" => 500, "Message" => "An internal error occurred. Please try again later."];
-        }
-    }
-
-    public function LoginUser($email, $password) {
-        try {
-            $db = new Database();
-            if($db->getStatus()) {
-                $um = new UserModel();
-                $stmt = $db->getConnection()->prepare($um->LoginUser());
-                $stmt->execute([$email]);
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
-                if($user && password_verify($password, $user['password'])) {
-                    setcookie('isLoggedIn', $user['id'], time() + 86400, '/');
-                    $_SESSION['user'] = $user['id'];
-                } else  {
-                    return 201;
+                    return 404;
                 }
             } else {
                 return 406;
@@ -56,4 +38,52 @@ class UserController
             return 404;
         }
     }
+
+    public function loginUser($email, $password) {
+        try {
+            $db = new Database();
+            if (!$db->getStatus()) {
+                return json_encode([
+                    "Status" => "Error",
+                    "Code" => 500,
+                    "Message" => "Database connection failed."
+                ]);
+            }
+            $authModel = new AuthModel();
+            $stmt = $db->getConnection()->prepare($authModel->LoginUser());
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['id'] = $user['id'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['fullname'] = $user['fullname'];
+    
+                return json_encode([
+                    "Status" => "Success",
+                    "Code" => 200,
+                    "Message" => "Successfully logged in.",
+                    "User" => [
+                        "id" => $user['id'],
+                        "role" => $user['role'],
+                        // "fullname" => $user['fullname']
+                    ]
+                ]);
+            } else {
+                return json_encode([
+                    "Status" => "Error",
+                    "Code" => 401,
+                    "Message" => "Invalid email or password."
+                ]);
+            }
+        } catch (PDOException $e) {
+            error_log("Login Error: " . $e->getMessage());
+    
+            return json_encode([
+                "Status" => "Error",
+                "Code" => 500,
+                "Message" => "An internal error occurred. Please try again later."
+            ]);
+        }
+    }
+    
 }

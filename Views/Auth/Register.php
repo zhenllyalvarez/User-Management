@@ -1,3 +1,16 @@
+<?php 
+    session_start();
+
+    if (isset($_SESSION['id']) && isset($_SESSION['role'])) {
+        if ($_SESSION['role'] === 'admin') {
+            header("Location: /user_management/Views/Admin/AdminDashboard.php");
+            exit();
+        } elseif ($_SESSION['role'] === 'user') {
+            header("Location: /user_management/Views/User/Dashboard.php");
+            exit();
+        }
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 

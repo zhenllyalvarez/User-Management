@@ -1,10 +1,15 @@
 <?php
-    session_start();
+session_start();
 
-    if(isset($_COOKIE['isLoggedIn'])) {
+if (isset($_SESSION['id']) && isset($_SESSION['role'])) {
+    if ($_SESSION['role'] === 'admin') {
+        header("Location: /user_management/Views/Admin/AdminDashboard.php");
+        exit();
+    } elseif ($_SESSION['role'] === 'user') {
         header("Location: /user_management/Views/User/Dashboard.php");
         exit();
     }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="img" href="/user_management/Assets/Img/tab-icon.jpg">
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <title>User Management - Login</title>
+    <title>User Management | Login</title>
 </head>
 
 <body>
@@ -32,7 +37,7 @@
                     <input class=" border border-gray-400 bg-white p-2 focus:outline-none rounded" name="Password" type="password" placeholder="********">
                 </div>
                 <div class="">
-                    <button type="submit" class="bg-blue-500 w-full text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Login</button>
+                    <button class="bg-blue-500 w-full text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Login</button>
                 </div>
             </form>
             <div class="flex flex-col gap-2 mt-4">

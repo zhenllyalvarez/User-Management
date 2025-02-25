@@ -1,10 +1,9 @@
 <?php
-namespace Router\UserRegister;
-
-use App\Controller\UserController;
-use PDOException;
+session_start();
 
 include ($_SERVER["DOCUMENT_ROOT"] . "/user_management/App/Controller/UserController.php");
+use App\Controller\UserController;
+use PDOException;
 
 header('Content-Type: application/json');
 if($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -13,20 +12,30 @@ if($_SERVER['REQUEST_METHOD'] == "POST") {
         $password = $_POST['Password'];
         
         if(!$email || !$password) {
-            echo  json_encode(["Status" => "error", "Code" => "400", "Message" => "Please fill up the input field properly."]);
+            echo json_encode([
+                "Status" => "error", 
+                "Code" => "400", 
+                "Message" => "Please fill up the input field properly."
+            ]);
             exit();
         }
         
         $UserController = new UserController();
-        $resut = $UserController->LoginUser($email, $password);
-        if($resut) {
-            header("Location: /user_management/Views/User/Dashboard.php");
-            // return json_encode(["Status" => "error", "Code" => "200", "Message" => "Success to login."]);
+        $result = $UserController->LoginUser($email, $password);
+        $userRst = json_decode($result, true);
+        if ($userRst['User'] && $userRst['User']['role'] === 'admin') {
+            header("Location: /user_management/Views/Admin/AdminDashboard.php");
+            exit();
         } else {
-            return json_encode(["Status" => "error", "Code" => "101", "Message" => "Failed to login."]);
+            header("Location: /user_management/Views/User/Dashboard.php");
+            exit();
         }
     } catch (PDOException $e) {
         error_log($e->getMessage());
-        return json_encode(['Status' => 'Error', "Code" => 404, "Message" => "There is an internal error for login Please try again."]);
+        return json_encode([
+            'Status' => 'Error', 
+            "Code" => 404, 
+            "Message" => "There is an internal error for login Please try again."
+        ]);
     }
 }
